@@ -12,6 +12,7 @@ var verbose = flag.Bool("v", false, "verbose mode")
 func main() {
 	go cancel() // add cancel listener
 	var ticker <-chan time.Time
+	tickerObj := time.NewTicker(time.Duration(500 * time.Hour.Milliseconds()))
 	flag.Parse()
 	roots := flag.Args()
 	if len(roots) == 0 {
@@ -29,7 +30,7 @@ func main() {
 	}()
 	var nfiles, nbytes int64
 	if *verbose {
-		ticker = time.NewTicker(time.Duration(500 * time.Hour.Milliseconds())).C
+		ticker = tickerObj.C
 	}
 	loop:
 		for {
@@ -47,5 +48,6 @@ func main() {
 				fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 			}
 		}
+	tickerObj.Stop()
 	fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 }
